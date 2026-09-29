@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roleta de Comandantes</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🎡 Roleta de Comandantes</h1>
+      <nav class="view-nav">
+        <button id="nav-config-btn" class="nav-btn" type="button">Configurar</button>
+        <button id="nav-wheel-btn" class="nav-btn" type="button">Roleta</button>
+      </nav>
+    </header>
+
+    <section id="page-config" class="page">
+      <div class="config-panel">
+        <h2>Setores</h2>
+        <div id="setores-list"></div>
+        <button id="add-setor-btn" class="add-row-btn" type="button">+ Adicionar setor</button>
+
+        <details class="bulk-import">
+          <summary class="bulk-summary">Colar lista de comandantes</summary>
+          <p class="bulk-hint">Um nome de comandante por linha. Cada linha vira um setor.</p>
+          <textarea
+            id="bulk-textarea"
+            class="bulk-textarea"
+            rows="5"
+            placeholder="Atraxa, Grand Unifier&#10;Krenko, Mob Boss&#10;Muldrotha, the Gravetide"
+          ></textarea>
+          <div class="bulk-actions">
+            <button id="bulk-load-btn" type="button" class="bulk-load-btn">Carregar lista</button>
+            <span id="bulk-status" class="bulk-status"></span>
+          </div>
+        </details>
+      </div>
+
+      <button id="go-wheel-btn" class="go-wheel-btn" type="button">Ver roleta →</button>
+    </section>
+
+    <section id="page-wheel" class="page">
+      <button id="back-config-btn" class="back-config-btn" type="button">← Setores</button>
+
+      <div class="wheel-wrapper">
+        <div class="pointer"></div>
+        <canvas id="wheel-canvas" width="520" height="520"></canvas>
+        <button id="spin-btn" class="spin-btn" type="button" disabled>Girar</button>
+
+        <div id="result" class="result-overlay hidden">
+          <img id="result-img" alt="Carta sorteada">
+          <div id="result-name" class="result-name"></div>
+          <div class="result-hint">Toque para continuar</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
