@@ -8,6 +8,7 @@
 
   const SEARCH_CACHE = new Map();
   const IMAGE_CACHE = new Map();
+  const STORAGE_KEY = "roleta-comandantes.setores.v1";
 
   const state = {
     setores: [], // { id, card: {name, artUrl, imageUrl} | null, requestSeq }
@@ -35,6 +36,30 @@
   const pageWheel = document.getElementById("page-wheel");
   const goWheelBtn = document.getElementById("go-wheel-btn");
   const backConfigBtn = document.getElementById("back-config-btn");
+
+  // ---------- Persistence (localStorage) ----------
+
+  function persistSetores() {
+    try {
+      const data = state.setores.filter((s) => s.card).map((s) => ({ card: s.card }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (err) {
+      console.warn("Não foi possível salvar os setores:", err);
+    }
+  }
+
+  function loadPersistedSetores() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data)) return null;
+      return data.filter((entry) => entry && entry.card && entry.card.name);
+    } catch (err) {
+      console.warn("Não foi possível carregar os setores salvos:", err);
+      return null;
+    }
+  }
 
   // ---------- View navigation ----------
 
@@ -356,12 +381,13 @@
       drawWheel();
     });
 
-    return { input, loadName };
+    return { input, loadName, applyCard: selectCard };
   }
 
   function updateSpinButtonState() {
     const validCount = state.setores.filter((s) => s.card).length;
     spinBtn.disabled = validCount < 2 || isSpinning;
+    persistSetores();
   }
 
   // ---------- Bulk import (paste list) ----------
@@ -623,7 +649,15 @@
     }, 150);
   });
 
-  createSetor();
+  const persisted = loadPersistedSetores();
+  if (persisted && persisted.length > 0) {
+    persisted.forEach((entry) => {
+      const api = createSetor();
+      api.applyCard(entry.card);
+    });
+  } else {
+    createSetor();
+  }
   drawWheel();
   showView("config");
 })();
